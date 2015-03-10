@@ -1,0 +1,24 @@
+public class Monster extends NPC
+{
+  String name = "monster";
+  int numMoves = 3;
+  public void randomAttack(Player player)
+  {
+    if ((int)(Math.random() * numMoves + 1) > (((numMoves - 1) * numMoves)/numMoves))
+    {
+      this.attackA(player);
+    }
+  }
+  public void attackA(Player player)
+  {
+    int damage;
+    if (super.d20() > 10)
+    {
+      damage = super.d6();
+      System.out.println("The " + name + " claws at you for " + damage + " damage.");
+      player.takeDamage(damage);
+    }
+    else damage = 0;
+    System.out.println("The monster misses with his attack.");
+  }
+}

@@ -1,0 +1,44 @@
+import java.util.Scanner;
+public class Dungeon
+{
+  public static void main (String[] args)
+  {
+    Scanner kb = new Scanner(System.in);
+    Player player = new Player(10, 5, 5);
+    int count = 0;
+    if (count == 0) System.out.println("You arrive at the entrance to the dungeon.");
+    while (count < 10)
+    {
+      Monster enemy = new Monster();
+      System.out.println("A wild " + enemy.getName() + " appears!");
+      if (player.getSpeed() > enemy.getSpeed()) //determines who goes first
+      {
+        while (player.getHealth() > 0 || enemy.getHealth() > 0)
+        {
+          System.out.println("What do you do?");
+          player.play(enemy);
+          enemy.randomAttack(player);
+          if (enemy.getHealth() <= 0)
+          {
+            count++;
+            System.out.println("You've defeated the " + enemy.getName() + " !");
+          }
+          else if (player.getHealth() <= 0)
+          {
+            System.out.println("You are dead.");
+          }
+        }
+      }
+      else
+      {
+        while (player.getHealth() > 0 || enemy.getHealth() > 0)
+        {
+          enemy.randomAttack(player);
+          System.out.println("What do you do?");
+          player.play(enemy);
+        }
+      }
+    }
+    System.out.println("Game over.");
+  }
+}

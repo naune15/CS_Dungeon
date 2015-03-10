@@ -1,0 +1,41 @@
+import java.util.Scanner;
+public class Player extends NPC
+{
+  Scanner kb = new Scanner(System.in);
+  int myHealth = 0;
+  int mySpeed = 0;
+  int myDefense = 0;
+  public Player(int health, int speed, int defense)
+  {
+    myHealth = health + this.d10();
+    mySpeed = speed + this.d10();
+    myDefense = defense + this.d10();
+  }
+  
+  public void play(NPC enemy)
+  {
+    String turn = kb.nextLine();
+    if (turn.equals("fireball")) this.fireball(enemy);
+    else 
+    {
+      System.out.println("You suffer a headache as you attempt to draw upon mystical knowledge unavailable to you.");
+    }
+  }
+  
+  public void fireball(NPC enemy)
+  {
+    int damage;
+    if (super.d20() > 10)
+    {
+      damage = super.d10();
+      System.out.println("You send a fireball forth which crashes into your foe for " + damage + " damage.");
+      enemy.takeDamage(damage);
+      if (super.d20() > 15)
+      {
+        enemy.becomeOnFire();
+      }
+    }
+    else damage = 0;
+    System.out.println("The fireball misses its target.");
+  }
+}
