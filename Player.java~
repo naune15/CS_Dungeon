@@ -2,19 +2,18 @@ import java.util.Scanner;
 public class Player extends NPC
 {
   Scanner kb = new Scanner(System.in);
-  int myHealth = 0;
-  int mySpeed = 0;
-  int myDefense = 0;
-  public Player(int health, int speed, int defense)
+  int myHealth = 20;
+  public Player()
   {
-    myHealth = health + this.d10();
-    mySpeed = speed + this.d10();
-    myDefense = defense + this.d10();
   }
   
   public void play(NPC enemy)
   {
     String turn = kb.nextLine();
+    if (turn.equals("health"))
+    {
+      System.out.println("Your health is " + myHealth + ".");
+                         }
     if (turn.equals("fireball")) this.fireball(enemy);
     else 
     {
@@ -22,10 +21,17 @@ public class Player extends NPC
     }
   }
   
+  public void takeDamage(int damage) //methods to lower class variables
+  {
+    myHealth -= damage;
+    System.out.println("You take " + damage + " damage.");
+    System.out.println("You have " + myHealth + " health left.");
+  }
+  
   public void fireball(NPC enemy)
   {
     int damage;
-    if (super.d20() > 10)
+    if (super.d20() > 5)
     {
       damage = super.d10();
       System.out.println("You send a fireball forth which crashes into your foe for " + damage + " damage.");
@@ -35,7 +41,10 @@ public class Player extends NPC
         enemy.becomeOnFire();
       }
     }
-    else damage = 0;
-    System.out.println("The fireball misses its target.");
+    else 
+    {
+      damage = 0;
+      System.out.println("The fireball misses its target.");
+    }
   }
 }

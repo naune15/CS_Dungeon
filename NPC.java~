@@ -1,8 +1,6 @@
 public class NPC
 {
   int myHealth = 1;
-  int mySpeed = 1;
-  int myDefense = 1;
   String name = "NPC";
   boolean onFire = false;
   boolean poisoned = false;
@@ -18,14 +16,6 @@ public class NPC
   {
     return myHealth;
   }
-  public int getSpeed()
-  {
-    return mySpeed;
-  }
-  public int getDefense()
-  {
-    return myDefense;
-  }
   public String getName()
   {
     return name;
@@ -37,14 +27,6 @@ public class NPC
   {
     myHealth -= damage;
     System.out.println("The " + name + " takes " + damage + " damage.");
-  }
-  public void slow(int damage)
-  {
-    mySpeed -= damage;
-  }
-  public void weaken(int damage)
-  {
-    myDefense -= damage;
   }
   
   public void becomeOnFire() //methods to change conditions

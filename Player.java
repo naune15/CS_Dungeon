@@ -3,8 +3,14 @@ public class Player extends NPC
 {
   Scanner kb = new Scanner(System.in);
   int myHealth = 20;
+  ArrayList<String> myInvent = new ArrayList<String> =();
   public Player()
   {
+  }
+  
+  public void potion()
+  {
+    if (myInvent.indexOf("potion") >= 0) 
   }
   
   public void play(NPC enemy)
