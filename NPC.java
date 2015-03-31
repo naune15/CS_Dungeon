@@ -50,7 +50,23 @@ public class NPC
     stunned = true;
   }
   
+  public boolean isOnFire() //methods keep track of conditions
+  {
+    return onFire;
+  }
+  public boolean isImobilized()
+  {
+    return immobilized;
+  }
   
+  public void reverseOnFire() //methods to reverse conditions
+  {
+    onFire = false;
+  }
+  public void reverseImmobilized()
+  {
+    immobilized = false;
+  }
   
   public static int d4() //methods to produce random numbers
   {
