@@ -12,13 +12,11 @@ public class Player extends NPC
   public void play(NPC enemy)
   {
     String turn = kb.nextLine();
-    if (turn.equals("health"))
-    {
-      System.out.println("Your health is " + myHealth + ".");
-                         }
     if (turn.equals("fireball")) this.fireball(enemy);
-    if (turn.equals("icebeam")) this.icebeam(enemy);
-    if (turn.equals("heal")) this.heal();
+    else if (turn.equals("icebeam")) this.icebeam(enemy);
+    else if (turn.equals("thunder")) this.thunder(enemy);
+    else if (turn.equals("poison")) this.poison(enemy);
+    else if (turn.equals("heal")) this.heal();
     else 
     {
       System.out.println("You suffer a headache as you attempt to draw upon mystical knowledge unavailable to you.");
@@ -28,20 +26,25 @@ public class Player extends NPC
   public void takeDamage(int damage) //methods to lower class variables
   {
     myHealth -= damage;
-    System.out.println("You take " + damage + " damage.");
     System.out.println("You have " + myHealth + " health left.");
   }
   
-  public void fireball(NPC enemy)
+   public int getHealth()
+  {
+    return myHealth;
+  }
+  
+  public void fireball(NPC enemy) //straight damage, with a small chance of doing massive continual damage
   {
     int damage;
-    if (super.d20() > 5)
+    if (super.d20() > 7)
     {
       damage = super.d10();
       System.out.println("You send a fireball forth which crashes into your foe for " + damage + " damage.");
       enemy.takeDamage(damage);
       if (super.d20() > 10)
       {
+        System.out.println("You light the enemy on fire!");
         enemy.becomeOnFire();
       }
     }
@@ -51,16 +54,18 @@ public class Player extends NPC
       System.out.println("The fireball misses its target.");
     }
   }
-  public void icebeam(NPC enemy)
+  public void icebeam(NPC enemy) //deals straight damage with a chance of immobilizing the enemy
   {
     int damage;
-    if (super.d20() > 5)
+    int roll = super.d20();
+    if (roll > 7)
     {
       damage = super.d10();
       System.out.println("An icebeam bursts from your hands dealing " + damage + " damage to the enemy.");
       enemy.takeDamage(damage);
-      if (super.d20() > 13)
+      if (roll > 13)
       {
+        System.out.println("You froze the enemy in its tracks!");
         enemy.becomeImmobilized();
       }
     }
@@ -68,6 +73,52 @@ public class Player extends NPC
     {
       damage = 0;
       System.out.println("The icebeam misses its target.");
+    }
+  }
+  
+  public void thunder(NPC enemy) //thunder always deals straight damage with a chance of doing extra damage
+  {
+    int damage;
+    int roll = super.d20();
+    if (roll > 7)
+    {
+      damage = super.d10();
+      System.out.println("You send a bolt of lightning at your opponent for " + damage + " damage.");
+      enemy.takeDamage(damage);
+    }
+    else if (roll == 20)
+    {
+      damage = 20;
+      System.out.println("You snend a massive bolt of lightning at your opponent for " + damage + " damage.");
+      enemy.takeDamage(damage);
+    }
+    else if (roll <= 7)
+    {
+      damage = 3;
+      System.out.println("You send a weaker lightning bold at your enemy for " + damage + " damage.");
+      enemy.takeDamage(damage);
+    }
+  }
+  
+  public void poison(NPC enemy) //large chance of doing small continuous damage
+  {
+    int damage;
+    int roll = super.d20();
+    if (roll > 10)
+    {
+      damage = super.d6();
+      System.out.println("From your hands, a wave of poison washes over your opponent for " + damage + " damage.");
+      enemy.takeDamage(damage);
+    }
+    if (roll > 5)
+    {
+      enemy.becomePoisoned();
+      System.out.println("Poison courses throughout the opponents body.");
+    }
+    else
+    {
+      damage = 0;
+      System.out.println("Your poison spell fails.");
     }
   }
   

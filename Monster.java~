@@ -1,11 +1,20 @@
-public class Zombie extends Monster
+public class Monster extends NPC
 {
-  int myHealth = 5;
-  String myName = "zombie";
+  int myHealth;
+  String name = "";
+  boolean onFire = false;
+  boolean poisoned = false;
+  boolean asleep = false;
+  boolean immobilized = false;
+  public Monster(int count, String monsterName)
+  {
+    myHealth = (super.d20())*count;
+    name = monsterName;
+  }
   public void randomAttack(Player player) //determines randomly which attack the monster will use
   {
     int temp = (int)(Math.random() * 4 + 1);
-    if (temp > 0)
+      if (temp > 0)
     {
       this.attackA(player);
     }
@@ -22,13 +31,13 @@ public class Zombie extends Monster
       this.attackD(player);
     }
   }
-  public void attackA(Player player)
+ public void attackA(Player player)
   {
     int damage;
     if (super.d20() > 5)
     {
       damage = super.d4();
-      System.out.println("The " + name + " clubs you for " + damage + " damage.");
+      System.out.println("The " + name + " attacks you for " + damage + " damage.");
     }
     else
     {
@@ -44,12 +53,12 @@ public class Zombie extends Monster
     if (super.d20() > 8)
     {
       damage = super.d6();
-      System.out.println("The " + name + " bites you for " + damage + " damage.");
+      System.out.println("The " + name + " attacks you for " + damage + " damage.");
     }
     else
     {
       damage = 0;
-      System.out.println("The monster misses with his attack.");
+      System.out.println("The " + name + " misses with his attack.");
     }
     player.takeDamage(damage);
   }
@@ -60,7 +69,7 @@ public class Zombie extends Monster
     if (super.d20() > 10)
     {
       damage = super.d8();
-      System.out.println("The " + name + " stabs you for " + damage + " damage.");
+      System.out.println("The " + name + " attacks you for " + damage + " damage.");
     }
     else
     {
@@ -76,7 +85,7 @@ public class Zombie extends Monster
     if (super.d20() > 15)
     {
       damage = super.d8();
-      System.out.println("The " + name + " torches you for " + damage + " damage.");
+      System.out.println("The " + name + " attacks you for " + damage + " damage.");
     }
     else
     {
@@ -89,7 +98,6 @@ public class Zombie extends Monster
   public void takeDamage(int damage) //methods to lower class variables
   {
     myHealth -= damage;
-    System.out.println("The " + name + " takes " + damage + " damage.");
     System.out.println("The " + name + " has " + myHealth + " health.");
   }
   

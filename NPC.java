@@ -6,7 +6,6 @@ public class NPC
   boolean poisoned = false;
   boolean asleep = false;
   boolean immobilized = false;
-  boolean stunned = false;
   public NPC()
   {
   }
@@ -37,17 +36,9 @@ public class NPC
   {
     poisoned = true;
   }
-  public void becomeAsleep()
-  {
-    asleep = true;
-  }
   public void becomeImmobilized()
   {
     immobilized = true;
-  }
-  public void becomeStunned()
-  {
-    stunned = true;
   }
   
   public boolean isOnFire() //methods keep track of conditions
@@ -57,6 +48,10 @@ public class NPC
   public boolean isImobilized()
   {
     return immobilized;
+  }
+  public boolean isPoisoned()
+  {
+    return poisoned;
   }
   
   public void reverseOnFire() //methods to reverse conditions

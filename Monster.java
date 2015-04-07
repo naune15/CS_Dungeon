@@ -4,11 +4,10 @@ public class Monster extends NPC
   String name = "";
   boolean onFire = false;
   boolean poisoned = false;
-  boolean asleep = false;
   boolean immobilized = false;
   public Monster(int count, String monsterName)
   {
-    myHealth = (super.d10())*count;
+    myHealth = (super.d20())*count;
     name = monsterName;
   }
   public void randomAttack(Player player) //determines randomly which attack the monster will use
@@ -98,7 +97,6 @@ public class Monster extends NPC
   public void takeDamage(int damage) //methods to lower class variables
   {
     myHealth -= damage;
-    System.out.println("The " + name + " takes " + damage + " damage.");
     System.out.println("The " + name + " has " + myHealth + " health.");
   }
   
