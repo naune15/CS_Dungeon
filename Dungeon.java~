@@ -5,9 +5,11 @@ public class Dungeon
   {
     Scanner kb = new Scanner(System.in);
     Player player = new Player();
-    int count = 1;
-    int superCount = 0;
-    ArrayList<String> Spellbook = new ArrayList<String>();
+    int count = 1; //count keeps track of how far along in the dungeon the player is
+    int superCount = 0; //keeps track of how many dungeons are cleared, progress in the game
+    System.out.println("You know the spells:");
+    System.out.println("icebeam fireball thunder");
+    System.out.println("heal poison");
     String monsters[][] = new String[][]{
       {"Goblin", "Bugbear", "Bear", "Minotaur", "Beholder"}, 
       {"Kobold", "Bandit", "Orc", "Drake", "Dragon"},
@@ -29,7 +31,7 @@ public class Dungeon
         {
           enemy.randomAttack(player); //then enemy goes if not immobilized
         }
-        else 
+        else
         {
           if ((int)(Math.random() * 20 + 1) > 10)
           {
@@ -45,6 +47,11 @@ public class Dungeon
           enemy.takeDamage(5); 
         }
         //if enemy is poisoned, take not as much damage
+        if (enemy.isPoisoned())
+        {
+          System.out.println("The " + enemy.getName() + " is hurt by the poison!");
+          enemy.takeDamage(2);
+        }
       }
       if (enemy.getHealth() <= 0)
       {
@@ -55,14 +62,16 @@ public class Dungeon
       else if (player.getHealth() <= 0)
       {
         System.out.println("You are dead.");
+        superCount = 4;
       }
     }
     if (count == 5)
     {
       System.out.println("You've won!");
-      count = 0;
+      count = 1;
       superCount++;
     }
     if (superCount == 3) System.out.println("Congratulations, you are a Master Wizard!");
+    if (superCount == 4) System.out.println("You've failed. Game over.");
   }
 }

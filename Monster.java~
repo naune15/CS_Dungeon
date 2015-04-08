@@ -4,7 +4,6 @@ public class Monster extends NPC
   String name = "";
   boolean onFire = false;
   boolean poisoned = false;
-  boolean asleep = false;
   boolean immobilized = false;
   public Monster(int count, String monsterName)
   {
