@@ -4,7 +4,6 @@ public class NPC
   String name = "NPC";
   boolean onFire = false;
   boolean poisoned = false;
-  boolean asleep = false;
   boolean immobilized = false;
   public NPC()
   {
@@ -15,6 +14,7 @@ public class NPC
   {
     return myHealth;
   }
+  
   public String getName()
   {
     return name;
@@ -26,6 +26,7 @@ public class NPC
   {
     myHealth -= damage;
     System.out.println("The " + name + " takes " + damage + " damage.");
+    System.out.println("The " + name + " has " + myHealth + " HP.");
   }
   
   public void becomeOnFire() //methods to change conditions

@@ -2,7 +2,8 @@ import java.util.Scanner;
 public class Player extends NPC
 {
   Scanner kb = new Scanner(System.in);
-  int myHealth = 20;
+  public String turn;
+  int myHealth = 20 + super.d20();
   boolean flying = false; //for the fly spell: the opponent's next attack misses
   boolean focused = false; //for the focus spell: makes the player's next attack more likely to hit
   boolean spells[][] = new boolean[][]{
@@ -23,26 +24,50 @@ public class Player extends NPC
   
   /*updates the player's spells based on monster killed
    */
-  public void spellbook(int row, int col)
+  public void spellbook(int row, int col, NPC enemy)
   {
-    if (col > 0)
+    if (col >= 0)
     {
-      spells[row][col] = true;
-      System.out.println("You learned the spell: " + newSpells[row][col] + "!");
+      if (spells[row][col] == true)
+      {
+        System.out.println("You have already learned the " + enemy.getName() + "'s secrets.");
+      }
+      else
+      {
+        spells[row][col] = true;
+        System.out.println("You learned the spell: " + newSpells[row][col] + "!");
+      }
     }
   }
   
-  public void play(NPC enemy)
+  /* checks to see if the player has too much health
+   * if the player has too much health, he dies
+   */
+  
+  public void checkHealth()
   {
-    String turn = kb.nextLine();
+    if (myHealth > 50)
+    {
+      System.out.println("You gain too much health and explode.");
+      myHealth = 0;
+    }
+  }
+  
+  
+  public void play(NPC enemy, int count)
+  {
+    turn = kb.nextLine();
     if (turn.equals("fireball")) this.fireball(enemy);
     else if (turn.equals("icebeam")) this.icebeam(enemy);
     else if (turn.equals("thunder")) this.thunder(enemy);
     else if (turn.equals("poison")) this.poison(enemy);
-    else if (turn.equals("heal")) this.heal();
+    else if (turn.equals("heal")) this.heal(count);
     else if (turn.equals("fly") && spells[1][1] == true) this.fly();
     else if (turn.equals("focus") && spells[1][0] == true) this.focus();
-    else if (turn.equals("blast")) this.blast(enemy);
+    else if (turn.equals("blast") && spells[0][0] == true) this.blast(enemy);
+    else if (turn.equals("drain") && spells[2][0] == true) this.drain(enemy);
+    else if (turn.equals("laser") && spells[0][1] == true) this.laser(enemy);
+    else if (turn.equals("corrupt") && spells[2][1] == true) this.corrupt(enemy);
     else
     {
       System.out.println("You suffer a headache as you attempt to draw upon mystical knowledge unavailable to you.");
@@ -68,48 +93,42 @@ public class Player extends NPC
   }
   
   
-  
   public int getHealth()
   {
     return myHealth;
   }
   
   
-  
-  
   public void fireball(NPC enemy) //straight damage, with a small chance of doing massive continual damage
   {
     int damage;
-    if (super.d20() > 7)
+    if (super.d20() > 6 || focused == true)
     {
       damage = super.d10();
       System.out.println("You send a fireball forth which crashes into your foe for " + damage + " damage.");
       enemy.takeDamage(damage);
-      if (super.d20() > 10)
+      if (super.d20() > 9 || focused == true)
       {
-        System.out.println("You light the enemy on fire!");
+        if (focused == true)
+        {
+          System.out.println("Your keen mind makes your spells more accurate");
+          if (super.d20() > 10)
+          {
+            focused = false;
+            System.out.println("As you cast the spell, your focus wears off.");
+          }
+        }
         enemy.becomeOnFire();
+        System.out.println("You light the enemy on fire!");
       }
     }
     else 
     {
-      if (focused == true)
-      {
-        this.fireball(enemy);
-        System.out.println("Your keen mind makes your spells more accurate.");
-        if (super.d20() < 10) 
-        {
-          focused = false;
-          System.out.println("You are no longer focused.");
-        }
-      }
-      else
-      {
-        damage = 0;
-        System.out.println("The fireball misses its target.");
-      }
+      damage = 0;
+      System.out.println("The fireball misses its target.");
     }
   }
+  
   
   
   
@@ -117,34 +136,31 @@ public class Player extends NPC
   {
     int damage;
     int roll = super.d20();
-    if (roll > 7)
+    if (roll > 6 || focused == true)
     {
       damage = super.d10();
       System.out.println("An icebeam bursts from your hands dealing " + damage + " damage to the enemy.");
       enemy.takeDamage(damage);
-      if (roll > 13)
+      if (roll > 12 || focused == true)
       {
+        if (focused == true)
+        {
+          System.out.println("Your keen mind makes your spells more accurate.");
+          if (super.d20() > 10)
+          {
+            focused = false;
+            System.out.println("As you cast the spell, your focus wears off.");
+          }
+        }
         System.out.println("You froze the enemy in its tracks!");
         enemy.becomeImmobilized();
       }
     }
-    else 
+    
+    else
     {
-      if (focused == true)
-      {
-        this.icebeam(enemy);
-        System.out.println("Your keen mind makes your spells more accurate.");
-        if (super.d20() < 10) 
-        {
-          focused = false;
-          System.out.println("You are no longer focused.");
-        }
-      }
-      else
-      {
-        damage = 0;
-        System.out.println("The icebeam misses its target.");
-      }
+      damage = 0;
+      System.out.println("The icebeam misses its target.");
     }
   }
   
@@ -155,36 +171,32 @@ public class Player extends NPC
   {
     int damage;
     int roll = super.d20();
-    if (roll > 7)
+    if (roll > 7 || focused == true)
     {
-      damage = super.d10();
+      damage = super.d10() + 2;
       System.out.println("You send a bolt of lightning at your opponent for " + damage + " damage.");
       enemy.takeDamage(damage);
     }
-    else if (roll == 20)
+    else if (roll == 20 || focused == true)
     {
+      if (focused == true)
+      {
+        System.out.println("Your keen mind makes your spells more accurate");
+        if (super.d20() > 10)
+        {
+          focused = false;
+          System.out.println("As you cast the spell, your focus wears off.");
+        }
+      }
       damage = 20;
       System.out.println("You snend a massive bolt of lightning at your opponent for " + damage + " damage.");
       enemy.takeDamage(damage);
     }
-    else if (roll <= 7)
+    else
     {
-      if (focused == true)
-      {
-        this.thunder(enemy);
-        System.out.println("Your keen mind makes your spells more accurate.");
-        if (super.d20() < 10) 
-        {
-          focused = false;
-          System.out.println("You are no longer focused.");
-        }
-      }
-      else
-      {
-        damage = 3;
-        System.out.println("You send a weaker lightning bold at your enemy for " + damage + " damage.");
-        enemy.takeDamage(damage);
-      }
+      damage = 3;
+      System.out.println("You send out a weaker lightning bolt that does " + damage + " damage.");
+      enemy.takeDamage(damage);
     }
   }
   
@@ -194,49 +206,40 @@ public class Player extends NPC
   {
     int damage;
     int roll = super.d20();
-    if (roll > 10)
-    {
-      damage = super.d6();
-      System.out.println("From your hands, a wave of poison washes over your opponent for " + damage + " damage.");
-      enemy.takeDamage(damage);
-    }
-    if (roll > 5)
-    {
-      enemy.becomePoisoned();
-      System.out.println("Poison courses throughout the opponents body.");
-    }
-    else
+    if (roll > 8 || focused == true)
     {
       if (focused == true)
       {
-        this.poison(enemy);
         System.out.println("Your keen mind makes your spells more accurate.");
-        if (super.d20() < 10) 
+        if (super.d20() > 10)
         {
           focused = false;
-          System.out.println("You are no longer focused.");
+          System.out.println("As you cast the spell, your focus wears off.");
         }
+        enemy.becomePoisoned();
+        System.out.println("Poison courses throughout the opponents body.");
       }
-      else
-      {
-        damage = 0;
-        System.out.println("Your poison spell fails.");
-      }
+      damage = super.d6();
+      System.out.println("From your hands, a wave of poison washes over your opponent for " + damage + " damage.");
+      enemy.takeDamage(damage);
+      enemy.becomePoisoned();
+    }
+    else
+    {
+      damage = 0;
+      System.out.println("Your wave of poison misses the opponent.");
     }
   }
   
   
   
-  public void heal() //method for the player to heal himself
+  public void heal(int count) //method for the player to heal himself
   {
-    int regen = super.d10() + 2;
+    int regen = super.d10() + 2 + count;
     myHealth += regen;
     System.out.println("You gain " + regen + " health.");
-    if (myHealth > 50)
-    {
-      System.out.println("You gain too much health and explode.");
-      myHealth = 0;
-    }
+    System.out.println("You have " + myHealth + " health left.");
+    checkHealth();
   }
   
   
@@ -249,40 +252,48 @@ public class Player extends NPC
   
   
   
-  public void focus() //spell makes the player more likely to hit
+  public void focus() //spell makes the player more hit and/or crit automatically
   {
     focused = true;
     System.out.println("Your eyes emit an arcane glow as you focus on your next move.");
   }
   
+  
+  
   public void blast(NPC enemy) //innacurate spell that does a lot of damage if it hits
   {
     {
-    int damage;
-    int roll = super.d20();
-    if (roll > 15)
-    {
-      damage = super.d20() + super.d20();
-      System.out.println("Your enemy recoils as you send a huge shockwave hurtling from your palm for " + damage + " damage.");
-      enemy.takeDamage(damage);
-    }
-    else if (roll == 20)
-    {
-      damage = 40;
-      System.out.println("The earth shakes as your shockwave deals colossal damage to your enemy.");
-      enemy.takeDamage(damage);
-    }
-    else
-    {
-      if (focused == true)
+      int damage;
+      int roll = super.d20();
+      if (roll > 15 || focused == true)
       {
-        this.blast(enemy);
-        System.out.println("Your keen mind makes your spells more accurate.");
-        if (super.d20() < 10) 
+        if (focused == true)
         {
-          focused = false;
-          System.out.println("You are no longer focused.");
+          System.out.println("Your keen mind makes your spells more accurate");
+          if (super.d20() > 10)
+          {
+            focused = false;
+            System.out.println("As you cast the spell, your focus wears off.");
+          }
         }
+        damage = super.d20() + super.d20();
+        System.out.println("Your enemy recoils as you send a huge shockwave hurtling from your palm for " + damage + " damage.");
+        enemy.takeDamage(damage);
+      }
+      else if (roll == 20)
+      {
+        if (focused == true)
+        {
+          System.out.println("Your keen mind makes your spells more accurate");
+          if (super.d20() > 10)
+          {
+            focused = false;
+            System.out.println("As you cast the spell, your focus wears off.");
+          }
+        }
+        damage = 40;
+        System.out.println("The earth shakes as your shockwave deals colossal damage to your enemy.");
+        enemy.takeDamage(damage);
       }
       else
       {
@@ -291,5 +302,102 @@ public class Player extends NPC
       }
     }
   }
+  
+  
+  public void drain(NPC enemy) //deals small damage to the enemy and heals player in the process
+  {
+    int damage;
+    if (super.d20() > 10 || focused == true)
+    {
+      if (focused == true)
+      {
+        System.out.println("Your keen mind makes your spells more accurate");
+        if (super.d20() > 10)
+        {
+          focused = false;
+          System.out.println("As you cast the spell, your focus wears off.");
+        }
+      }
+      damage = super.d8();
+      System.out.println("Red energy erupts from the enemy's body and engulfs your own, damaging the enemy and healing you for " + damage + " health.");
+      enemy.takeDamage(damage);
+      myHealth += damage;
+      checkHealth();
+    }
+    else
+    {
+      damage = 0;
+      System.out.println("You attempt to drain the enemy's life force, but the spell fails.");
+    }
+  }
+  
+  
+  public void laser(NPC enemy) //spell that does more damage at lower health
+  {
+    int damage;
+    int bonus = 15 - myHealth;
+    if (super.d20() > 5 || focused == true)
+    {
+      if (focused == true)
+      {
+        System.out.println("Your keen mind makes your spells more accurate");
+        if (super.d20() > 10)
+        {
+          focused = false;
+          System.out.println("As you cast the spell, your focus wears off.");
+        }
+      }
+      damage = super.d8() + bonus;
+      if (damage > 0)
+      {
+        System.out.println("A single black beam erupts from your finger and pierces the enemy for " + damage + " damage.");
+        enemy.takeDamage(damage);
+      }
+      else
+      {
+        System.out.println("Your vitality corrupts the beam and ends up damaging yourself for " + damage + " damage.");
+        myHealth += damage;
+      }
+    }
+    else
+    {
+      damage = 0;
+      System.out.println("You attempt to fire a beam of darkness, but it fizzles out at your fingertips.");
+    }
+  }
+  
+  
+  public void corrupt(NPC enemy) //innacurate spell that does a lot of damage if it hits
+  {
+    {
+      int damage;
+      int roll = super.d20();
+      if (roll > 7 || focused == true)
+      {
+        if (focused == true)
+        {
+          System.out.println("Your keen mind makes your spells more accurate");
+          if (super.d20() > 10)
+          {
+            focused = false;
+            System.out.println("As you cast the spell, your focus wears off.");
+          }
+        }
+        damage = enemy.getHealth()/2;
+        System.out.println("Dark flames engulf your enemy as its life force is drained");
+        enemy.takeDamage(damage);
+      }
+      else if (roll < 2)
+      {
+        System.out.println("Your spell backfires spectacularly, and you fall to your own dark flames.");
+        myHealth -= myHealth/2;
+      }
+      else
+      {
+        damage = 0;
+        System.out.println("You attempt to conjure dark flames, but the spell misses entirely..");
+      }
+    }
   }
 }
+
